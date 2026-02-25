@@ -28,7 +28,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:3000',
-      'https://secure-blog-platform.vercel.app',
+      'https://secure-blog-ivory.vercel.app',
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
