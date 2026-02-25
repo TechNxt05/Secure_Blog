@@ -21,7 +21,10 @@ async function bootstrap() {
     }));
     app.useGlobalFilters(new common_2.HttpExceptionFilter());
     app.enableCors({
-        origin: ['http://localhost:3000'],
+        origin: [
+            'http://localhost:3000',
+            'https://secure-blog-platform.vercel.app',
+        ],
         credentials: true,
         methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
