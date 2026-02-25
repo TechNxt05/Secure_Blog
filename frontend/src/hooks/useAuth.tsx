@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { getToken, getStoredUser, setToken, setStoredUser, removeToken, clearStoredUser } from '@/lib/auth';
 import { authApi } from '@/lib/api';
 
@@ -10,7 +10,27 @@ interface User {
     name: string;
 }
 
-export function useAuth() {
+interface AuthContextType {
+    user: User | null;
+    loading: boolean;
+    isAuthenticated: boolean;
+    login: (email: string, password: string) => Promise<void>;
+    register: (email: string, name: string, password: string) => Promise<void>;
+    logout: () => void;
+}
+
+const defaultAuth: AuthContextType = {
+    user: null,
+    loading: true,
+    isAuthenticated: false,
+    login: async () => { },
+    register: async () => { },
+    logout: () => { },
+};
+
+const AuthContext = createContext<AuthContextType>(defaultAuth);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -28,7 +48,6 @@ export function useAuth() {
         setToken(res.access_token);
         setStoredUser(res.user);
         setUser(res.user);
-        return res;
     }, []);
 
     const register = useCallback(async (email: string, name: string, password: string) => {
@@ -36,7 +55,6 @@ export function useAuth() {
         setToken(res.access_token);
         setStoredUser(res.user);
         setUser(res.user);
-        return res;
     }, []);
 
     const logout = useCallback(() => {
@@ -45,5 +63,18 @@ export function useAuth() {
         setUser(null);
     }, []);
 
-    return { user, loading, login, register, logout, isAuthenticated: !!user };
+    const value: AuthContextType = {
+        user,
+        loading,
+        isAuthenticated: !!user,
+        login,
+        register,
+        logout,
+    };
+
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+    return useContext(AuthContext);
 }
