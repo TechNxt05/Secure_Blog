@@ -122,7 +122,7 @@ let BlogsService = class BlogsService {
     }
     async findPublishedFeed(page, limit) {
         const skip = (page - 1) * limit;
-        const [blogs, total] = await this.prisma.$transaction([
+        const [blogs, total] = await Promise.all([
             this.prisma.blog.findMany({
                 where: { isPublished: true },
                 orderBy: { createdAt: 'desc' },

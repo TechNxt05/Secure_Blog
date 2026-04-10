@@ -35,7 +35,7 @@ let CommentsService = class CommentsService {
     }
     async findByBlog(blogId, page, limit) {
         const skip = (page - 1) * limit;
-        const [comments, total] = await this.prisma.$transaction([
+        const [comments, total] = await Promise.all([
             this.prisma.comment.findMany({
                 where: { blogId },
                 orderBy: { createdAt: 'desc' },

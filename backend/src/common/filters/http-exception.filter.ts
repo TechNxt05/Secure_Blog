@@ -40,7 +40,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 message = exception.message;
             }
         } else {
-            this.logger.error('Unhandled exception', exception);
+            const err = exception instanceof Error ? exception : new Error(String(exception));
+            this.logger.error(`Unhandled exception: ${err.message}`, err.stack);
         }
 
         const errorResponse: ErrorResponse = {
